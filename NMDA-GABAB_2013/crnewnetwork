@@ -1,0 +1,28 @@
+#!/bin/sh
+args=
+run=0
+
+ctime=`stat -f "%m" newnetwork 2>/dev/null`	# last compile time
+mtime1=`stat -f "%m" main.cpp` 					# last modify time of main.cpp
+mtime2=`stat -f "%m" functions.cpp` 			# last modify time of functions.cpp
+mtime3=`stat -f "%m" network.h` 				# last modify time of newnetwork.h
+if ((mtime1-ctime>0||mtime2-ctime>0||mtime3-ctime>0)); then 
+	g++ -g main.cpp functions.cpp -o newnetwork -fast && run=1
+else
+	run=1
+fi
+if [ "-c" == $1 ]; then
+	shift
+fi
+for ((i=1; i<=$#; i++)); do
+	args=$args\ ${!i}
+done
+
+if (($run==1)) && ./newnetwork $args; then
+	for file in voltage network; do
+		turnx11 on ./plot/"$file"plot.sh
+	done
+	./plot/networkplot.sh ./results
+else
+	echo -e "\a"
+fi

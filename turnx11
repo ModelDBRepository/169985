@@ -1,0 +1,18 @@
+#!/bin/bash
+# in a gnuplot file that has a flag for whether to plot in x11 or something
+# else, changes the flag to 1 or 0 depending on how it is called
+# $1 is "on" or "off" for whether to set the flag on or off
+# $2 is the name of the file to be changed
+
+if [ $# -lt 2 ]; then
+  echo "Correct syntax is \"turnx11 on|off filename\"" >&2
+  exit 1
+elif [ $1 = on ]; then
+	newfile="$2a"
+	sed 's/x11=0/x11=1/' < $2 > $newfile ; mv $newfile $2 ; chmod +x $2
+elif [ $1 = off ]; then
+	newfile="$2a"
+	sed 's/x11=1/x11=0/' < $2 > $newfile ; mv $newfile $2 ; chmod +x $2
+else
+  echo "Correct syntax is \"turnx11 on|off filename\"" >&2 
+fi
